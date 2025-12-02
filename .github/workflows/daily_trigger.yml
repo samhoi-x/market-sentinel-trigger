@@ -23,7 +23,7 @@ jobs:
           --header 'Content-Type: application/json' \
           --data-raw '{
               "inputs": {
-                  "Ticker": "${{ matrix.ticker }}"
+                  "ticker": "${{ matrix.ticker }}"
               },
               "response_mode": "blocking",
               "user": "github_action_bot"
