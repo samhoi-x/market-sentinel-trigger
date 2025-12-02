@@ -17,7 +17,7 @@ jobs:
           --header 'Content-Type: application/json' \
           --data-raw '{
               "inputs": {
-                  "ticker": "BTC" 
+                  "ticker": "BTC","ETC", "SOL","QQQ"
               },
               "response_mode": "blocking",
               "user": "github_action_bot"
