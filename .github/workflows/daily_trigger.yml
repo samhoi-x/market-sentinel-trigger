@@ -1,24 +1,32 @@
 name: Market Sentinel Daily Trigger
 on:
   schedule:
-    # 這裡設定時間。注意：GitHub 用的是 UTC 時間。
-    # 例子：UTC 00:00 = 香港時間 08:00
+    # 每天 UTC 0點 (香港早上 8點) 執行
     - cron: '0 0 * * *'
-  # 允許你手動點擊按鈕測試
+  # 允許手動觸發
   workflow_dispatch:
 jobs:
   trigger_dify:
     runs-on: ubuntu-latest
+    strategy:
+      # 這裡定義你的監控清單，想加什麼直接在後面寫
+      matrix:
+        ticker: ["BTC", "ETH", "NVDA", "TSLA", "MSTR"]
+      # 避免並發過高導致 API 報錯，設定最大並行數 (可選)
+      max-parallel: 1
     steps:
-      - name: Call Dify API
+      - name: Call Dify API for ${{ matrix.ticker }}
         run: |
+          echo "正在分析: ${{ matrix.ticker }} ..."
           curl -X POST 'https://api.dify.ai/v1/workflows/run' \
-          --header 'Authorization: Bearer ${{secrets.DIFY_API_KEY}}' \
+          --header 'Authorization: Bearer ${{ secrets.DIFY_API_KEY }}' \
           --header 'Content-Type: application/json' \
           --data-raw '{
               "inputs": {
-                  "ticker": "BTC","ETC", "SOL","QQQ"
+                  "Ticker": "${{ matrix.ticker }}"
               },
               "response_mode": "blocking",
               "user": "github_action_bot"
           }'
+          # 休息 5 秒，避免連續請求太快 (Rate Limiting)
+          sleep 5 
